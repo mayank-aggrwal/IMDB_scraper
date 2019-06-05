@@ -32,7 +32,7 @@ class MySpider(scrapy.Spider):
             rating = box.css("div.ratings-bar strong::text").get()
             #desc = box.css("p.text-muted::text").get()
             #votes = box.css("p.sort-num_votes-visible::text").get()
-            #Collction = box.css("p.sort-num_votes-visible::text").get()
+            #Collection = box.css("p.sort-num_votes-visible::text").get()
             #Director = box.css("p a::text").get()
             #Stars = box.css("p a::text").get()
 
@@ -41,7 +41,8 @@ class MySpider(scrapy.Spider):
                 "year":year,
                 "certificate":certificate,
                 "runtime": runtime,
-                "genres": genres
+                "genres": genres,
+                "rating": rating
             }
             
         self.cnt = self.cnt + 1
