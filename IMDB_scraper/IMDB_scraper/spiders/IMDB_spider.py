@@ -21,20 +21,38 @@ class MySpider(scrapy.Spider):
 
         boxes = response.css("div.lister-item-content")
         for box in boxes:
+
             det_url = self.main_site_url + box.css("h3.lister-item-header a::attr(href)").get()
+
             name = box.css("h3.lister-item-header a::text").get()
             year = box.css("h3.lister-item-header span.lister-item-year.text-muted.unbold::text").get()[1:5]
             certificate = box.css("p.text-muted span.certificate::text").get()
             runtime = box.css("p.text-muted span.runtime::text").get()
             x = box.css("p.text-muted span.genre::text").get().split(',')
             genres = list(map(lambda y: y.strip(), x))
-            
             rating = box.css("div.ratings-bar strong::text").get()
-            #desc = box.css("p.text-muted::text").get()
-            #votes = box.css("p.sort-num_votes-visible::text").get()
-            #Collection = box.css("p.sort-num_votes-visible::text").get()
-            #Director = box.css("p a::text").get()
-            #Stars = box.css("p a::text").get()
+            votes = box.css("p.sort-num_votes-visible span:nth-child(2)::text").get()
+            collection = box.css("p.sort-num_votes-visible span:nth-child(5)::text").get()
+
+            Directors = []
+            i = 1
+            selector = 'div.lister-item-content p:nth-child(5) a:nth-child(%i)::text'%i
+            x = box.css(selector).get()
+            while x is not None:
+                Directors.append(x)
+                i = i + 1
+                selector = 'div.lister-item-content p:nth-child(5) a:nth-child(%i)::text'%i
+                x = box.css(selector).get()
+            
+            i = i + 1
+            Stars = []
+            selector = 'div.lister-item-content p:nth-child(5) a:nth-child(%i)::text'%i
+            x = box.css(selector).get()
+            while x is not None:
+                Stars.append(x)
+                i = i + 1
+                selector = 'div.lister-item-content p:nth-child(5) a:nth-child(%i)::text'%i
+                x = box.css(selector).get()
 
             yield {
                 "name":name,
@@ -42,7 +60,11 @@ class MySpider(scrapy.Spider):
                 "certificate":certificate,
                 "runtime": runtime,
                 "genres": genres,
-                "rating": rating
+                "rating": rating,
+                "directors": Directors,
+                "stars": Stars,
+                "votes": votes,
+                "collection": collection
             }
             
         self.cnt = self.cnt + 1
@@ -58,31 +80,4 @@ class MySpider(scrapy.Spider):
                 yield scrapy.Request(next_page, callback=self.parse)
             
 
-    # def parse(self, response):
-
-    #     boxes = response.css("div._1UoZlX")
-    #     for box in boxes:
-    #         mobile_name = box.css("div._3wU53n::text").get()
-    #         mobile_price = box.css("div._1vC4OE._2rQ-NK::text").get()[1:]
-    #         mobile_rating = box.css("div.hGSR34::text").get()
-
-    #         yield {
-    #             "name":mobile_name,
-    #             "price":mobile_price,
-    #             "rating":mobile_rating,
-    #         }
-            
-    #     self.cnt = self.cnt + 1
-    #     self.log(self.cnt)
-
-    #     pages = response.css("a._3fVaIS::attr(href)").getall()
-    #     next_page_id = pages[0]
-    #     if len(pages) > 1:
-    #         next_page_id = pages[1]
-    #         self.log(next_page_id)
-
-    #     if self.cnt < 5:
-    #         if next_page_id is not None:
-    #             next_page = response.urljoin(next_page_id)
-    #             self.log(next_page)
-    #             yield scrapy.Request(next_page, callback=self.parse)
+            #  yield scrapy.Request(next_page, callback=self.parse)
