@@ -69,7 +69,7 @@ class MySpider(scrapy.Spider):
             
         self.cnt = self.cnt + 1
         self.log(self.cnt)
-
+        
         pages = response.css("a.lister-page-next.next-page::attr(href)").get()
         next_page_id = self.main_site_url + pages
 
