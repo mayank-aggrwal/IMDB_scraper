@@ -11,7 +11,7 @@ class MySpider(scrapy.Spider):
 
         base_url = 'https://www.imdb.com/search/title?genres=g&languages=en&sort=user_rating,desc&title_type=feature&num_votes=10000,&explore=genres'
 
-        myurl = base_url[:41] + 'sci-fi' + base_url[42:]
+        myurl = base_url[:41] + self.category + base_url[42:]
         urls = []
         urls.append(myurl)
         for url in urls:
